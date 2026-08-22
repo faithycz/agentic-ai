@@ -1,5 +1,4 @@
-from openai import OpenAI
-from utils import setup, prompt_llm
+from common.utils import setup, prompt_llm
 
 def main():
     parameters = {
