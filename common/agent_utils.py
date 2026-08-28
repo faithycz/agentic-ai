@@ -3,10 +3,11 @@ from typing import Any
 
 from agents import OpenAIChatCompletionsModel
 from openai import AsyncOpenAI
-from agents import Agent
+from agents import Agent, ModelSettings
 
-
-def llm_agent(agent_name: str, model: str, instructions: str, api_key: str = "", base_url: str = "", tools_list: list[str] | None = None) -> Agent[Any]:
+# add guardrails parameter when necessary then attach the parameter/argument (email_guardrail) to the agent you want a guardrail for in sales_agents.py
+# then call the multi sales manager function in main
+def llm_agent(agent_name: str, model: str, instructions: str, api_key: str = "", base_url: str = "", tools_list: list[str] | None = None, model_settings: ModelSettings | None = None) -> Agent[Any]:
     """
     This function returns an agent.
 
@@ -16,6 +17,8 @@ def llm_agent(agent_name: str, model: str, instructions: str, api_key: str = "",
     :param api_key: Name of api key. Optional for OpenAI.
     :param base_url: Name of base url. Optional for OpenAI.
     :param tools_list: Optional tool list.
+    :param model_settings: Optional model settings.
+    :param output_guardrails: Optional output guardrails.
     :return:
     """
 
@@ -26,9 +29,15 @@ def llm_agent(agent_name: str, model: str, instructions: str, api_key: str = "",
         This is for OpenAI agents.
         """
         if tools_list is None:
-            agent = Agent(name=agent_name, model=model, instructions=instructions)
+            if model_settings is None:
+                agent = Agent(name=agent_name, model=model, instructions=instructions)
+            else:
+                agent = Agent(name=agent_name, model=model, instructions=instructions, model_settings=model_settings)
         else:
-            agent = Agent(name=agent_name, model=model, instructions=instructions, tools=tools_list)
+            if model_settings is None:
+                agent = Agent(name=agent_name, model=model, instructions=instructions, tools=tools_list)
+            else:
+                agent = Agent(name=agent_name, model=model, instructions=instructions, tools=tools_list, model_settings=model_settings)
     else:
         """
         This is for non-OpenAI agents (e.g. gemini).
