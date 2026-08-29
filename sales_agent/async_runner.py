@@ -1,7 +1,6 @@
 import asyncio
 from agents import Runner, trace
-
-from openaisdkagent.sales_agent.sales_agents import sales_picker, sales_sender, multi_sales_manager
+from sales_agent.sales_agents import sales_picker, sales_sender, multi_sales_manager
 from sales_agents import sales_agent1, sales_agent2, sales_agent3
 
 async def write_sales_emails(message: str) -> list[str]:

@@ -1,8 +1,10 @@
-from agents import Runner, trace, gen_trace_id
+from agents import Runner, trace, gen_trace_id, ModelSettings, Agent
+
+from common.model import openai_gpt_mini
 from search_agent import search_agent
 from planner_agent import planner_agent, WebSearchItem, WebSearchPlan
 from writer_agent import writer_agent, ReportData
-from email_agent import email_agent
+from common.emails import send_email_tool
 import asyncio
 
 class ResearchManager:
@@ -53,4 +55,15 @@ class ResearchManager:
         return result.final_output
 
     async def send_email(self, report: ReportData) -> None:
+        INSTRUCTIONS = """
+            You are provided with a detailed report. Use your tool to send an email, converting the report into
+            a clean, well presented HTML email with an appropriate subject line.
+            """
+
+        settings = ModelSettings(tool_choice="required")
+
+        email_agent = Agent(name="Email Agent", instructions=INSTRUCTIONS, tools=[send_email_tool],
+                            model=openai_gpt_mini,
+                            model_settings=settings)
+
         await Runner.run(email_agent, report.markdown_report)
